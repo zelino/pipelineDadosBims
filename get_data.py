@@ -5,15 +5,15 @@ import pandas as pd
 import time
 import json
 from datetime import datetime, timedelta
-
+#  (datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')
 async def fetch_all_sales(session_id, base_url, endpoint, params_base, batch_size=500):
     url = f'{base_url}/{endpoint}'
     data_info = []
     found_ids = set()
     offset = 0
     limit = batch_size
-    dateTo = datetime.now().strftime('%Y-%m-%d')
-    dateFrom = (datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')
+    dateTo =  datetime.now().strftime('%Y-%m-%d')
+    dateFrom = '2019-01-01'
     print(f"Buscando dados a partir de: {dateFrom} até: {dateTo}")
 
     async with aiohttp.ClientSession() as session:
@@ -54,53 +54,10 @@ async def fetch_all_sales(session_id, base_url, endpoint, params_base, batch_siz
 
             # Atualizar o offset para a próxima página
             offset += limit
+            print(offset)
             await asyncio.sleep(0.1)  # Para evitar excesso de requisições
     
     return data_info, found_ids
-
-async def fetch_all_sales_void(session_id, base_url, endpoint, params_base, batch_size = 100):
-    url = f'{base_url}/{endpoint}'
-    data_info = []
-    found_ids = set()
-    offset = 0
-    limit = batch_size
-    dateTo = datetime.now().strftime('%Y-%m-%d')
-    dateFrom = (datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')
-
-    print("Buscando todos os registros com status void")
-
-    async with aiohttp.ClientSession() as session:
-        while True:
-            params = params_base.copy()
-            params.update({
-                'sid': session_id,
-                'status': 'void',
-                'to' : dateTo,
-                'from' : dateFrom,
-                'limit' : limit,
-                'offset' : offset
-            })
-            data = await fetch_data(session, url, params)
-            
-            if not data:
-                print("Nenhum dado encontrado para atualizar em ft_vendas_canceladas.\n")
-                break
-
-            for item in data:
-                sale = item['Sale']
-                sale_info = {
-                    'venda_id': int(sale['id']),
-                    'data': pd.to_datetime(sale['created']),
-                    'status': str(sale['status']),
-                    'void': bool(sale['void'])
-                }
-                data_info.append(sale_info)
-                found_ids.add(int(sale['id']))
-                
-            offset += limit
-            await asyncio.sleep(0.1)
-
-    return data_info, list(found_ids)
 
 async def fetch_all_products_sales(session_id, base_url, endpoint, params_base, batch_size=500):
     url = f'{base_url}/{endpoint}'
@@ -108,8 +65,8 @@ async def fetch_all_products_sales(session_id, base_url, endpoint, params_base, 
     found_ids = set()
     offset = 0
     limit = batch_size
-    dateTo = datetime.now().strftime('%Y-%m-%d')
-    dateFrom = (datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')
+    dateTo =  datetime.now().strftime('%Y-%m-%d')
+    dateFrom = '2017-01-01'
     
     print(f"Buscando dados a partir de: {dateFrom} até: {dateTo}")
 
@@ -149,6 +106,7 @@ async def fetch_all_products_sales(session_id, base_url, endpoint, params_base, 
                     found_ids.add(int(product.get('sale_id', 0)))
                     
             offset += limit
+            print (offset)
             await asyncio.sleep(0.1)
     return data_info, found_ids
 
@@ -202,7 +160,7 @@ async def fetch_all_products(session_id, base_url, endpoint, params_base, batch_
                 break
             
             all_data_info.extend(data_info)
-            offset += limit  # Move to the next page
+            offset += limit
 
     return all_data_info, founds_ids
 
