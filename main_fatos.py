@@ -24,14 +24,15 @@ async def process_sales_pipeline(session_id):
     # Deletar registros existentes com IDs encontrados
     if all_found_ids:
         try:
-            await delete_records('ft_vendas', 'venda_id', all_found_ids)
+            # await delete_records('ft_vendas', 'venda_id', all_found_ids)
+            truncate_table('ft_vendas')
             print(f"Registros deletados com sucesso!")
         except Exception as e:
             print(f"Erro ao deletar registros: {str(e)}")
 
     # Inserir os novos dados
         try:
-            await insert_data_in_batches(all_sales_info, 'ft_vendas', batch_size=3000)
+            await insert_data(all_sales_info, 'ft_vendas')
             print(f"Dados inseridos com sucesso! {len(all_sales_info)}")
         except Exception as e:
             print(f"Erro ao inserir dados em ft_vendas: {str(e)}")
@@ -56,12 +57,13 @@ async def process_products_sales_pipeline(session_id):
     all_found_ids.update(found_ids)
         
     try:
-        await delete_records('ft_vendas_detalhes', 'venda_id', all_found_ids)
+        # await delete_records('ft_vendas_detalhes', 'venda_id', all_found_ids)
+        truncate_table('ft_vendas_detalhes')
         print("Registros deletados com sucesso")
     except Exception as e:
         print(f"Erro ao deletar registros: {str(e)}")
     try:
-        await insert_data_in_batches(all_sales_info, 'ft_vendas_detalhes',batch_size=3000)
+        await insert_data(all_sales_info, 'ft_vendas_detalhes')
     except Exception as e:
         print(f"Erro ao inserir dados em ft_vendas_detalhes: {str(e)}")
         

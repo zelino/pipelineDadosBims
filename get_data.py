@@ -13,7 +13,7 @@ async def fetch_all_sales(session_id, base_url, endpoint, params_base, batch_siz
     offset = 0
     limit = batch_size
     dateTo =  datetime.now().strftime('%Y-%m-%d')
-    dateFrom = '2019-01-01'
+    dateFrom = (datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')
     print(f"Buscando dados a partir de: {dateFrom} até: {dateTo}")
 
     async with aiohttp.ClientSession() as session:
@@ -66,7 +66,7 @@ async def fetch_all_products_sales(session_id, base_url, endpoint, params_base, 
     offset = 0
     limit = batch_size
     dateTo =  datetime.now().strftime('%Y-%m-%d')
-    dateFrom = '2017-01-01'
+    dateFrom = (datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')
     
     print(f"Buscando dados a partir de: {dateFrom} até: {dateTo}")
 
