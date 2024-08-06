@@ -14,7 +14,7 @@ async def fetch_all_sales(session_id, base_url, endpoint, params_base, batch_siz
     limit = batch_size
     dateTo =  datetime.now().strftime('%Y-%m-%d')
     dateFrom = (datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')
-    print(f"Buscando dados a partir de: {dateFrom} até: {dateTo}")
+    # print(f"Buscando dados a partir de: {dateFrom} até: {dateTo}")
 
     async with aiohttp.ClientSession() as session:
         while True:
@@ -37,6 +37,7 @@ async def fetch_all_sales(session_id, base_url, endpoint, params_base, batch_siz
                 sale_info = {
                     'venda_id': int(sale['id']),
                     'data_hora': pd.to_datetime(sale['created']),
+                    'data': pd.to_datetime(sale['issue_date']),
                     'valor_total': int(float(sale['amount']) or 0),
                     'valor_pago': int(float(sale['paid']) or 0),
                     'cod_empresa': int(sale['company_id'] or 0),
@@ -54,7 +55,7 @@ async def fetch_all_sales(session_id, base_url, endpoint, params_base, batch_siz
 
             # Atualizar o offset para a próxima página
             offset += limit
-            print(offset)
+            # print(offset)
             await asyncio.sleep(0.1)  # Para evitar excesso de requisições
     
     return data_info, found_ids
@@ -68,7 +69,7 @@ async def fetch_all_products_sales(session_id, base_url, endpoint, params_base, 
     dateTo =  datetime.now().strftime('%Y-%m-%d')
     dateFrom = (datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')
     
-    print(f"Buscando dados a partir de: {dateFrom} até: {dateTo}")
+    # print(f"Buscando dados a partir de: {dateFrom} até: {dateTo}")
 
 
     async with aiohttp.ClientSession() as session:
@@ -106,7 +107,7 @@ async def fetch_all_products_sales(session_id, base_url, endpoint, params_base, 
                     found_ids.add(int(product.get('sale_id', 0)))
                     
             offset += limit
-            print (offset)
+            # print (offset)
             await asyncio.sleep(0.1)
     return data_info, found_ids
 
@@ -117,7 +118,7 @@ async def fetch_all_products(session_id, base_url, endpoint, params_base, batch_
     founds_ids = set()
     all_data_info = []
 
-    print(f"Iniciando busca com batch_size {batch_size}")
+    # print(f"Iniciando busca com batch_size {batch_size}")
 
     async with aiohttp.ClientSession() as session:
         while True:
@@ -156,7 +157,7 @@ async def fetch_all_products(session_id, base_url, endpoint, params_base, batch_
                 founds_ids.add(int(product['id']))
             
             if not data_info:
-                print("Nenhum dado novo encontrado.")
+                # print("Nenhum dado novo encontrado.")
                 break
             
             all_data_info.extend(data_info)
@@ -171,7 +172,7 @@ async def fetch_all_providers(session_id, base_url, endpoint, params_base, batch
     offset = 0
     limit = batch_size
     
-    print("Buscando por fornecedores")
+    # print("Buscando por fornecedores")
     
     async with aiohttp.ClientSession() as session:
         while True:
@@ -209,7 +210,7 @@ async def fetch_all_warehouses(session_id, base_url, endpoint, params_base):
     data_info = []
     found_ids = set()
     
-    print("Buscando por depositos")
+    # print("Buscando por depositos")
     
     async with aiohttp.ClientSession() as session:
         params = params_base.copy()
@@ -240,7 +241,7 @@ async def fetch_all_agencies(session_id, base_url, endpoint, params_base):
     data_info = []
     found_ids = set()
     
-    print("Buscando por lojas")
+    # print("Buscando por lojas")
     
     async with aiohttp.ClientSession() as session:
         params = params_base.copy()
@@ -272,7 +273,7 @@ async def fetch_all_stock(session_id, base_url, endpoint, params_base, batch_siz
     data_info = []
     found_ids = set()
     
-    print(f"Iniciando com batch de {batch_size} para dim_estoque")
+    # print(f"Iniciando com batch de {batch_size} para dim_estoque")
     
     async with aiohttp.ClientSession() as session:
         while True:
@@ -281,7 +282,7 @@ async def fetch_all_stock(session_id, base_url, endpoint, params_base, batch_siz
             data = await fetch_data(session, url, params)
 
             if not data:
-                print(f"Nenhum dado encontrado.")
+                # print(f"Nenhum dado encontrado.")
                 break
             
             for item in data:
@@ -308,7 +309,7 @@ async def fetch_all_ptypes(session_id, base_url, endpoint, params_base):
     data_info = []
     found_ids = set()
     
-    print("Buscando grupos de produtos")
+    # print("Buscando grupos de produtos")
     
     async with aiohttp.ClientSession() as session:
         params = params_base.copy()
@@ -337,7 +338,7 @@ async def fetch_all_promotions(session_id, base_url, endpoint, params_base, batc
     offset = 0
     limit = batch_size
     
-    print("Buscando por promoções")
+    # print("Buscando por promoções")
     
     async with aiohttp.ClientSession() as session:
         while True:
@@ -384,7 +385,7 @@ async def fetch_all_promotions_products(session_id, base_url, endpoint, params_b
     offset = 0
     limit = batch_size
     
-    print("Buscando por produtos das promoções")
+    # print("Buscando por produtos das promoções")
     
     async with aiohttp.ClientSession() as session:
         while True:

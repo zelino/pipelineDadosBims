@@ -10,22 +10,22 @@ async def process_products_pipeline(session_id):
     product_info, found_ids = await fetch_all_products(session_id, BASE_URL, 'products', params)
     
     if not product_info:
-        print("Nenhum produto novo encontrado")
+        # print("Nenhum produto novo encontrado")
         return
 
     all_found_ids.update(found_ids)
     
     try:
         truncate_table('dim_produtos')
-        print("Tabela 'dim_produtos' truncada com sucesso")
+        # print("Tabela 'dim_produtos' truncada com sucesso")
         
         await insert_data(product_info, 'dim_produtos')
-        print("Dados inseridos com sucesso")
+        # print("Dados inseridos com sucesso")
     except Exception as e:
         print(f"Erro ao processar dados: {str(e)}")
     
     if all_found_ids:
-        print(f"Total de IDs processados: {len(all_found_ids)}")
+        print(f"Total de IDs processados em dim_produtos: {len(all_found_ids)}\n")
         
         
 async def process_providers_pipeline(session_id):
@@ -39,7 +39,7 @@ async def process_providers_pipeline(session_id):
     provider_info, found_ids = await fetch_all_providers(session_id, BASE_URL, 'contacts', providers_params)
     
     if not provider_info:
-        print("Nenhum novo fornecedor encontrado")
+        # print("Nenhum novo fornecedor encontrado")
         return
 
     all_providers_info.extend(provider_info)
@@ -48,20 +48,20 @@ async def process_providers_pipeline(session_id):
     if all_providers_info:
         try:
             truncate_table('dim_fornecedores')
-            print("Tabela dim_fornecedores truncada com sucesso.")
+            # print("Tabela dim_fornecedores truncada com sucesso.")
         except Exception as e:
             print(f"Erro ao truncar a tabela dim_fornecedores: {str(e)}")
         
         try:
             await insert_data(all_providers_info, 'dim_fornecedores')
-            print(f"Batch de {len(all_providers_info)} novos dados inseridos com sucesso!")
+            # print(f"Batch de {len(all_providers_info)} novos dados inseridos com sucesso!")
         except Exception as e:
             print(f"Erro ao inserir novos dados: {str(e)}")
 
     if all_found_ids:
-        print(f"IDs processados: {len(all_found_ids)}")
+        print(f"IDs processados em dim_fornecedores: {len(all_found_ids)}\n")
     
-    print("Processamento do pipeline de fornecedores concluído com sucesso")
+    # print("Processamento do pipeline de fornecedores concluído com sucesso")
     
     
 async def process_warehouse_pipeline(session_id):
@@ -73,7 +73,7 @@ async def process_warehouse_pipeline(session_id):
     warehouse_info, found_ids = await fetch_all_warehouses(session_id, BASE_URL, 'warehouses', providers_params)
     
     if not warehouse_info:
-        print("Nenhum novo deposito encontrado")
+        # print("Nenhum novo deposito encontrado")
         return
 
     all_warehouse_info.extend(warehouse_info)
@@ -82,18 +82,18 @@ async def process_warehouse_pipeline(session_id):
     if all_warehouse_info:
         try:
             truncate_table('dim_depositos')
-            print("Tabela dim_depositos truncada com sucesso.")
+            # print("Tabela dim_depositos truncada com sucesso.")
         except Exception as e:
             print(f"Erro ao truncar a tabela dim_depositos: {str(e)}")
         
         try:
             await insert_data(all_warehouse_info, 'dim_depositos')
-            print(f"Batch de {len(all_warehouse_info)} novos dados inseridos com sucesso!")
+            # print(f"Batch de {len(all_warehouse_info)} novos dados inseridos com sucesso!")
         except Exception as e:
             print(f"Erro ao inserir novos dados: {str(e)}")
 
     if all_found_ids:
-        print(f"IDs processados: {len(all_found_ids)}")
+        print(f"IDs processados em dim_depositos: {len(all_found_ids)}\n")
     
     
 async def process_agencies_pipeline(session_id):
@@ -105,7 +105,7 @@ async def process_agencies_pipeline(session_id):
     agency_info, found_ids = await fetch_all_agencies(session_id, BASE_URL, 'agencies', providers_params)
     
     if not agency_info:
-        print("Nenhuma nova loja encontrada")
+        # print("Nenhuma nova loja encontrada")
         return
 
     all_agency_info.extend(agency_info)
@@ -114,18 +114,18 @@ async def process_agencies_pipeline(session_id):
     if all_agency_info:
         try:
             truncate_table('dim_lojas')
-            print("Tabela dim_lojas truncada com sucesso.")
+            # print("Tabela dim_lojas truncada com sucesso.")
         except Exception as e:
             print(f"Erro ao truncar a tabela dim_lojas: {str(e)}")
         
         try:
             await insert_data(all_agency_info, 'dim_lojas')
-            print(f"Batch de {len(all_agency_info)} novos dados inseridos com sucesso!")
+            # print(f"Batch de {len(all_agency_info)} novos dados inseridos com sucesso!")
         except Exception as e:
             print(f"Erro ao inserir novos dados: {str(e)}")
 
     if all_found_ids:
-        print(f"IDs processados: {len(all_found_ids)}")
+        print(f"IDs processados em dim_lojas: {len(all_found_ids)}\n")
     
 async def process_stock_pipeline(session_id):
     all_stock_info = []
@@ -139,17 +139,17 @@ async def process_stock_pipeline(session_id):
     if stock_info:
         try:
             truncate_table('dim_estoque')
-            print("Tabela dim_estoque truncada com sucesso!")
+            # print("Tabela dim_estoque truncada com sucesso!")
         except Exception as e:
             print(f"Erro ao truncar a tabela dim_estoque: {str(e)}")
         
         try:
             await insert_data_in_batches(all_stock_info, 'dim_estoque', batch_size=3000)
-            print(f"Dados inseridos {len(all_stock_info)}")
+            # print(f"Dados inseridos {len(all_stock_info)}")
         except Exception as e:
             print(f"Erro ao inserir novos dados: {str(e)}")
     if all_found_ids:
-        print(f"IDs processados: {len(all_found_ids)}")
+        print(f"IDs processados em dim_estoque: {len(all_found_ids)}\n")
         
     
 async def process_ptype_pipeline(session_id):
@@ -161,7 +161,7 @@ async def process_ptype_pipeline(session_id):
     ptype_info, found_ids = await fetch_all_ptypes(session_id, BASE_URL, 'ptypes', ptypes_params)
     
     if not ptype_info:
-        print("Nenhum novo grupo encontrado")
+        # print("Nenhum novo grupo encontrado")
         return
     
     all_ptype_info.extend(ptype_info)
@@ -170,15 +170,15 @@ async def process_ptype_pipeline(session_id):
     if all_ptype_info:
         try:
             truncate_table('dim_grupos')
-            print("Tabela dim_grupos truncado com sucesso!")
+            # print("Tabela dim_grupos truncado com sucesso!")
         except Exception as e:
             print(f"Erro ao truncar tabela dim_grupos: {str(e)}")
         
         try:
             await insert_data(all_ptype_info, 'dim_grupos')
-            print(f"Batch de {len(all_ptype_info)} novos dados inseridos com sucesso")
+            # print(f"Batch de {len(all_ptype_info)} novos dados inseridos com sucesso")
         except Exception as e:
-            print(f"Erro ao inserir novos dados: {str(e)}")
+            print(f"Erro ao inserir novos dados em dim_grupos: {str(e)}\n")
             
     if all_found_ids:
         print(f"IDs processados {len(all_found_ids)}")

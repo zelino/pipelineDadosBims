@@ -24,21 +24,21 @@ async def process_sales_pipeline(session_id):
     # Deletar registros existentes com IDs encontrados
     if all_found_ids:
         try:
-            # await delete_records('ft_vendas', 'venda_id', all_found_ids)
-            truncate_table('ft_vendas')
-            print(f"Registros deletados com sucesso!")
+            await delete_records('ft_vendas', 'venda_id', all_found_ids)
+            # truncate_table('ft_vendas')
+            # print(f"Registros deletados com sucesso!")
         except Exception as e:
             print(f"Erro ao deletar registros: {str(e)}")
 
     # Inserir os novos dados
         try:
-            await insert_data(all_sales_info, 'ft_vendas')
-            print(f"Dados inseridos com sucesso! {len(all_sales_info)}")
+            await insert_data_in_batches(all_sales_info, 'ft_vendas',batch_size=3000)
+            # print(f"Dados inseridos com sucesso! {len(all_sales_info)}")
         except Exception as e:
             print(f"Erro ao inserir dados em ft_vendas: {str(e)}")
 
     if all_found_ids:
-        print(f"IDs encontrados e processados: {len(all_found_ids)}")
+        print(f"IDs encontrados e processados em ft_vendas: {len(all_found_ids)}\n")
         
 async def process_products_sales_pipeline(session_id):
     all_sales_info = []
@@ -57,18 +57,18 @@ async def process_products_sales_pipeline(session_id):
     all_found_ids.update(found_ids)
         
     try:
-        # await delete_records('ft_vendas_detalhes', 'venda_id', all_found_ids)
-        truncate_table('ft_vendas_detalhes')
-        print("Registros deletados com sucesso")
+        await delete_records('ft_vendas_detalhes', 'venda_id', all_found_ids)
+        # truncate_table('ft_vendas_detalhes')
+        # print("Registros deletados com sucesso")
     except Exception as e:
         print(f"Erro ao deletar registros: {str(e)}")
     try:
-        await insert_data(all_sales_info, 'ft_vendas_detalhes')
+        await insert_data_in_batches(all_sales_info, 'ft_vendas_detalhes',batch_size=3000)
     except Exception as e:
         print(f"Erro ao inserir dados em ft_vendas_detalhes: {str(e)}")
         
     if all_found_ids:
-        print(f"IDs encontrados e processados: {len(all_found_ids)}")
+        print(f"IDs encontrados e processados em ft_vendas_detalhes: {len(all_found_ids)}\n")
 
 async def process_promotions_pipeline(session_id):
     all_promotions_info = []
@@ -83,7 +83,7 @@ async def process_promotions_pipeline(session_id):
     
     try:
         truncate_table('ft_promocoes')
-        print("Tabela ft_promocoes truncada com sucesso!")
+        # print("Tabela ft_promocoes truncada com sucesso!")
     except Exception as e:
         print(f"Erro ao truncar registros: {str(e)}")
     try:
@@ -92,7 +92,7 @@ async def process_promotions_pipeline(session_id):
         print(f"Erro ao inserir dados em ft_promocoes: {str(e)}")
         
     if all_found_ids:
-        print(f"IDs encontrados e processados: {len(all_found_ids)}")
+        print(f"IDs encontrados e processados em ft_promocoes: {len(all_found_ids)}\n")
         
         
 async def process_products_promotions_pipeline(session_id):
@@ -108,18 +108,18 @@ async def process_products_promotions_pipeline(session_id):
     
     try:
         truncate_table('dim_promocoes_detalhes')
-        print("Tabela dim_promocoes_detalhes truncada com sucesso!")
+        # print("Tabela dim_promocoes_detalhes truncada com sucesso!")
     except Exception as e:
         print(f"Erro ao truncar registros: {str(e)}")
     
     try:
         await insert_data(all_promotions_info, 'dim_promocoes_detalhes')
-        print(f"Dados inseridos: {len(all_promotions_info)}")
+        # print(f"Dados inseridos: {len(all_promotions_info)}")
     except Exception as e:
         print(f"Erro ao inserir dados em dim_promocoes_detalhes: {str(e)}")
         
     if all_found_ids:
-        print(f"IDs encontrados e processados: {len(all_found_ids)}")
+        print(f"IDs encontrados e processados em dim_promocoes_detalhes: {len(all_found_ids)}\n")
 
 async def main():
     session_id = await login(BASE_URL, USER, PASSWORD, TENANT)
@@ -139,8 +139,8 @@ async def main():
                     print("Falha ao tentar logar, tentando login novamente em 60 segundos")
                     await asyncio.sleep(60)
                     continue
-            # await process_products_promotions_pipeline(session_id)
-            # await process_promotions_pipeline(session_id)
+            await process_products_promotions_pipeline(session_id)
+            await process_promotions_pipeline(session_id)
             await process_products_sales_pipeline(session_id)
             await process_sales_pipeline(session_id)
             print("Esperando proxima verificação em 5 minutos")
