@@ -1,7 +1,8 @@
 import asyncio
-from functions import BASE_URL, USER, PASSWORD, TENANT, login, insert_data, truncate_table, delete_records, insert_data_in_batches
+from functions import BASE_URL, USER, PASSWORD, TENANT, login, insert_data, truncate_table, delete_records, insert_data_in_batches,delete_records_in_batches
 from get_data import fetch_all_sales, fetch_all_products_sales,fetch_all_promotions_products, fetch_all_promotions
 from datetime import datetime, timedelta
+import time
 
 async def process_sales_pipeline(session_id):
     all_sales_info = []
@@ -24,7 +25,8 @@ async def process_sales_pipeline(session_id):
     # Deletar registros existentes com IDs encontrados
     if all_found_ids:
         try:
-            await delete_records('ft_vendas', 'venda_id', all_found_ids)
+            await delete_records_in_batches('ft_vendas', 'venda_id', all_found_ids,batch_size=1500)
+            # time.sleep(0.3)
             # truncate_table('ft_vendas')
             # print(f"Registros deletados com sucesso!")
         except Exception as e:
@@ -57,7 +59,8 @@ async def process_products_sales_pipeline(session_id):
     all_found_ids.update(found_ids)
         
     try:
-        await delete_records('ft_vendas_detalhes', 'venda_id', all_found_ids)
+        await delete_records_in_batches('ft_vendas_detalhes', 'venda_id', all_found_ids,batch_size=1500)
+        # time.sleep(0.3)
         # truncate_table('ft_vendas_detalhes')
         # print("Registros deletados com sucesso")
     except Exception as e:
@@ -139,8 +142,8 @@ async def main():
                     print("Falha ao tentar logar, tentando login novamente em 60 segundos")
                     await asyncio.sleep(60)
                     continue
-            await process_products_promotions_pipeline(session_id)
-            await process_promotions_pipeline(session_id)
+            # await process_products_promotions_pipeline(session_id)
+            # await process_promotions_pipeline(session_id)
             await process_products_sales_pipeline(session_id)
             await process_sales_pipeline(session_id)
             print("Esperando proxima verificação em 5 minutos")

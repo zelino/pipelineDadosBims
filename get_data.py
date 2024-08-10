@@ -108,7 +108,7 @@ async def fetch_all_products_sales(session_id, base_url, endpoint, params_base, 
                     
             offset += limit
             # print (offset)
-            await asyncio.sleep(0.1)
+            await asyncio.sleep(0.8)
     return data_info, found_ids
 
 async def fetch_all_products(session_id, base_url, endpoint, params_base, batch_size=500):
