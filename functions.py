@@ -11,16 +11,16 @@ import asyncio
 load_dotenv()
 
 
-BASE_URL = os.getenv('BASE_URL')
-USER = os.getenv('USER')
-PASSWORD = os.getenv('PASSWORD')
-TENANT = os.getenv('TENANT')
-HOST = os.getenv('HOST')
-PORT = os.getenv('PORT')
-DATABASE = os.getenv('DATABASE')
-USER_BD = os.getenv('USER_BD')
-PASSWORD_BD = os.getenv('PASSWORD_BD')
-DRIVER = os.getenv('DRIVER')
+# BASE_URL = os.getenv('BASE_URL')
+# USER = os.getenv('USER')
+# PASSWORD = os.getenv('PASSWORD')
+# TENANT = os.getenv('TENANT')
+# HOST = os.getenv('HOST')
+# PORT = os.getenv('PORT')
+# DATABASE = os.getenv('DATABASE')
+# USER_BD = os.getenv('USER_BD')
+# PASSWORD_BD = os.getenv('PASSWORD_BD')
+# DRIVER = os.getenv('DRIVER')
 
 async def login(base_url, user, password, tenant):
     login_url = f'{base_url}/users/login'

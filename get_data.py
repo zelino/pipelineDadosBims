@@ -13,7 +13,7 @@ async def fetch_all_sales(session_id, base_url, endpoint, params_base, batch_siz
     offset = 0
     limit = batch_size
     dateTo =  datetime.now().strftime('%Y-%m-%d')
-    dateFrom = (datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')
+    dateFrom = (datetime.now() - timedelta(days=45)).strftime('%Y-%m-%d')
     # print(f"Buscando dados a partir de: {dateFrom} até: {dateTo}")
 
     async with aiohttp.ClientSession() as session:
@@ -67,7 +67,7 @@ async def fetch_all_products_sales(session_id, base_url, endpoint, params_base, 
     offset = 0
     limit = batch_size
     dateTo =  datetime.now().strftime('%Y-%m-%d')
-    dateFrom = (datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')
+    dateFrom = (datetime.now() - timedelta(days=45)).strftime('%Y-%m-%d')
     
     # print(f"Buscando dados a partir de: {dateFrom} até: {dateTo}")
 
@@ -111,7 +111,7 @@ async def fetch_all_products_sales(session_id, base_url, endpoint, params_base, 
             await asyncio.sleep(0.8)
     return data_info, found_ids
 
-async def fetch_all_products(session_id, base_url, endpoint, params_base, batch_size=500):
+async def fetch_all_products(session_id, base_url, endpoint, params_base, batch_size=100):
     url = f'{base_url}/{endpoint}'
     offset = 0
     limit = batch_size
@@ -254,19 +254,19 @@ async def fetch_all_agencies(session_id, base_url, endpoint, params_base):
             agency = item['Agency']
             agency_info = {
                 'loja_id': int(agency['id']),
-                'nome': str(agency['name']),
+                'nome': str(agency['name'] or ''),
                 'cod_empresa': int(agency['company_id'] or 0),
-                'endereco': str(agency['address']),
-                'latitude': str(agency['lat']),
-                'longitude': str(agency['lng']),
-                'metragem': str(agency['phone'])
+                'endereco': str(agency['address'] or ''),
+                'latitude': str(agency['lat'] or ''),
+                'longitude': str(agency['lng'] or ''),
+                'metragem': str(agency['phone'] or '')
             }
             data_info.append(agency_info)
             found_ids.add(int(agency['id']))
                         
     return data_info, found_ids
 
-async def fetch_all_stock(session_id, base_url, endpoint, params_base, batch_size=500):
+async def fetch_all_stock(session_id, base_url, endpoint, params_base, batch_size=300):
     url = f'{base_url}/{endpoint}'
     offset = 0  # Início da paginação
     limit = batch_size  # Tamanho do lote
